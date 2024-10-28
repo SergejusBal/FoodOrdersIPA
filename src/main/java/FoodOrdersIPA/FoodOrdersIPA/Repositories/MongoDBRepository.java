@@ -36,7 +36,9 @@ public class MongoDBRepository {
                 .append("dishes",foodOrder.getDishes())
                 .append("status",foodOrder.getStatus())
                 .append("orderTime",foodOrder.getOrderTime() == null ? null : foodOrder.getOrderTime().toString())
-                .append("orderEndTime",foodOrder.getOrderEndTime() == null ? null : foodOrder.getOrderEndTime().toString());
+                .append("orderEndTime",foodOrder.getOrderEndTime() == null ? null : foodOrder.getOrderEndTime().toString())
+                .append("paymentAmount",foodOrder.getPaymentAmount())
+                .append("paymentMethod",foodOrder.getPaymentMethod());
     }
 
     public void addOrder(FoodOrder foodOrder) {
@@ -54,6 +56,8 @@ public class MongoDBRepository {
         foodOrder.setStatus(doc.getString("status"));
         foodOrder.setOrderTime(formatDateTime(doc.getString("orderTime")));
         foodOrder.setOrderEndTime(formatDateTime(doc.getString("orderEndTime")));
+        foodOrder.setPaymentAmount(doc.getDouble("paymentAmount"));
+        foodOrder.setPaymentMethod(doc.getString("paymentMethod"));
         return foodOrder;
     }
 

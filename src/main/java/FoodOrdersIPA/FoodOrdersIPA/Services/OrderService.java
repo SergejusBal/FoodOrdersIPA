@@ -40,6 +40,8 @@ public class OrderService {
 
     }
     public String sendOrderToRabbitToUpdate(FoodOrder foodOrder){
+        if (foodOrder.getId().length() != 24) return "Invalid data";
+
         foodOrder.setOrderEndTime(LocalDateTime.now());
         RabbitMQService rabbitMQService = new RabbitMQService("FoodOrderUpdate");
         rabbitMQService.sendObjectToQueue(generateJson(foodOrder));
@@ -47,7 +49,17 @@ public class OrderService {
 
     }
 
+    public String sendOrderToUpdatePaymentStatus(FoodOrder foodOrder){
+        if (foodOrder.getId().length() != 24) return "Invalid data";
+
+        RabbitMQService rabbitMQService = new RabbitMQService("PaymentUpdate");
+        rabbitMQService.sendObjectToQueue(generateJson(foodOrder));
+        return "Payment was successfully updated";
+    }
+
     public FoodOrder getOrderByID(String id) {
+
+        if (id.length() != 24) return new FoodOrder();
 
         try {
            String jsonMessage = redisService.get(id);

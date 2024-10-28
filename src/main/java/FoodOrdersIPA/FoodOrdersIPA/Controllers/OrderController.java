@@ -36,7 +36,15 @@ public class OrderController {
 
         if(status == HttpStatus.OK) return new ResponseEntity<>(response, status);
         else return new ResponseEntity<>(response, status);
+    }
+    @PostMapping("/updatePayment/{id}")
+    public ResponseEntity<String> updatePaymentStatus(@RequestBody FoodOrder foodOrder, @PathVariable String id) {
+        foodOrder.setId(id);
+        String response = orderService.sendOrderToUpdatePaymentStatus(foodOrder);
+        HttpStatus status = checkHttpStatus(response);
 
+        if(status == HttpStatus.OK) return new ResponseEntity<>(response, status);
+        else return new ResponseEntity<>(response, status);
     }
 
     @GetMapping("/{id}")
@@ -44,7 +52,7 @@ public class OrderController {
 
         FoodOrder foodOrder = orderService.getOrderByID(id);
 
-        if(foodOrder.getId() == null)  return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        if(foodOrder == null || foodOrder.getId() == null)  return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         else return new ResponseEntity<>(foodOrder, HttpStatus.OK);
     }
 
@@ -57,10 +65,6 @@ public class OrderController {
         else return new ResponseEntity<>(foodOrderList, HttpStatus.OK);
     }
 
-
-
-
-
     private HttpStatus checkHttpStatus(String response){
 
         switch (response){
@@ -68,7 +72,7 @@ public class OrderController {
                 return HttpStatus.INTERNAL_SERVER_ERROR;
             case "Invalid data":
                 return HttpStatus.BAD_REQUEST;
-            case "Food order was successfully added","Order was successfully updated":
+            case "Food order was successfully added","Order was successfully updated", "Payment was successfully updated":
                 return HttpStatus.OK;
             default:
                 return HttpStatus.NOT_IMPLEMENTED;
